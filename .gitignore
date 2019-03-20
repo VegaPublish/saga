@@ -48,7 +48,7 @@ package-lock.json
 
 # OAuth secrets
 /config/*
+!/config/oauth.fallback.json
 
 # Visual studio code stuff
 .vscode
-

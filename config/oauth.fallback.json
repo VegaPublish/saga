@@ -1,0 +1,16 @@
+[
+  {
+    "strategy": "google-oauth20",
+    "name": "google",
+    "title": "Google",
+    "config": {
+      "name": "google",
+      "clientID": "123456789012-12abcdefghijklmnopqrstuvwxyz0123.apps.googleusercontent.com",
+      "clientSecret": "abcdefghijklmnopqrstuvwx",
+      "callbackURL": "/v1/auth/callback/google"
+    },
+    "authConfig": {
+      "scope": ["email", "profile"]
+    }
+  }
+]
