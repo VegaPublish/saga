@@ -1,0 +1,65 @@
+title: 'parameters'
+documents:
+  - _id: a
+    _type: test
+    name: A
+  - _id: c
+    _type: test
+    name: C
+  - _id: b
+    _type: test
+    name: B
+
+tests:
+  - title: 'literal boolean'
+    query: '[$t, $f]'
+    params:
+      t: true
+      f: false
+    result: [true, false]
+  - title: 'literal float'
+    query: '$float'
+    params:
+      float: 3.14
+    result: 3.14
+  - title: 'literal integer'
+    query: '$int'
+    params:
+      int: 12
+    result: 12
+  - title: 'literal string'
+    query: '$string'
+    params:
+      string: 'hello'
+    result: 'hello'
+
+  - title: 'query filter'
+    query: |
+      *[ _type == "test" && _id == $id ][0].name
+    params:
+      id: a
+    result: A
+  - title: 'query projection'
+    query: |
+      *[ _id == "a" ]{..., "extra": $extra}[0].extra
+    params:
+      extra: test
+    result: test
+  - title: 'query range'
+    query: |
+      * | order(_id asc)[$from..$to] | []._id
+    params:
+      from: 0
+      to: 1
+    result:
+      - a
+      - b
+  - title: 'query order'
+    query: |
+      * | order($order desc)[]._id
+    params:
+      order: name
+    result:
+      - c
+      - b
+      - a

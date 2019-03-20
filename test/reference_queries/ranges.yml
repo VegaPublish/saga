@@ -1,0 +1,151 @@
+title: 'Ranges'
+documents:
+  - _id: 'one'
+    ord: 1
+    _type: 'any.type'
+  - _id: 'two'
+    ord: 2
+    _type: 'any.type'
+  - _id: 'three'
+    ord: 3
+    _type: 'any.type'
+  - _id: 'four'
+    ord: 4
+    _type: 'any.type'
+  - _id: 'five'
+    ord: 5
+    _type: 'any.type'
+
+tests:
+  - title: 'documents all'
+    query: |
+      *|order(ord asc)[].ord
+    result: [1, 2, 3, 4, 5]
+  - title: 'documents single'
+    query: |
+      [
+        *[_type == 'any.type']|order(ord asc)[0].ord,
+        *[_type == 'any.type']|order(ord asc)[2].ord,
+        *[_type == 'any.type']|order(ord asc)[4].ord,
+        *[_type == 'any.type']|order(ord asc)[5].ord,
+        *[_type == 'any.type']|order(ord asc)[8].ord,
+      ]
+    result:
+      - 1
+      - 3
+      - 5
+      - null
+      - null
+  - title: 'documents ..'
+    query: |
+      [
+        *|order(ord asc)[0..2].ord,
+        *|order(ord asc)[1..3].ord,
+        *|order(ord asc)[2..4].ord,
+        *|order(ord asc)[3..6].ord,
+        *|order(ord asc)[5..8].ord,
+        *|order(ord asc)[10..15].ord,
+        *|order(ord asc)[3..1].ord,
+      ]
+    result:
+      - [1, 2, 3]
+      - [2, 3, 4]
+      - [3, 4, 5]
+      - [4, 5]
+      - []
+      - []
+      - []
+  - title: 'documents ...'
+    query: |
+      [
+        *|order(ord asc)[0...2].ord,
+        *|order(ord asc)[1...4].ord,
+        *|order(ord asc)[3...6].ord,
+        *|order(ord asc)[5...8].ord,
+        *|order(ord asc)[10...15].ord,
+      ]
+    # FIXME Broken, yields 500 - see https://github.com/sanity-io/gradient/issues/591
+    #*|order(ord asc)[3...1].ord,
+    result:
+      - [1, 2]
+      - [2, 3, 4]
+      - [4, 5]
+      - []
+      - []
+  - title: 'documents multiple'
+    query: |
+      [
+        *|order(ord asc)[2...6][0..3][0..1].ord,
+      ]
+    result:
+      - [3, 4]
+  - title: 'literals all'
+    query: |
+      [1,2,3,4,5][]
+    result: [1, 2, 3, 4, 5]
+  - title: 'literals single'
+    query: |
+      [
+        [1,2,3,4,5][0],
+        [1,2,3,4,5][2],
+        [1,2,3,4,5][4],
+        [1,2,3,4,5][5],
+        [1,2,3,4,5][8],
+        [1,2,3,4,5][-2],
+        [1,2,3,4,5][-1],
+      ]
+    result:
+      - 1
+      - 3
+      - 5
+      - null
+      - null
+      - 4
+      - 5
+  - title: 'literals ..'
+    query: |
+      [
+        [1,2,3,4,5][0..2],
+        [1,2,3,4,5][1..3],
+        [1,2,3,4,5][2..4],
+        [1,2,3,4,5][3..6],
+        [1,2,3,4,5][5..8],
+        [1,2,3,4,5][10..15],
+        [1,2,3,4,5][3..1],
+      ]
+    result:
+      - [1, 2, 3]
+      - [2, 3, 4]
+      - [3, 4, 5]
+      - [4, 5]
+      - []
+      - []
+      - []
+  - title: 'literals ...'
+    query: |
+      [
+        [1,2,3,4,5][0...2],
+        [1,2,3,4,5][1...4],
+        [1,2,3,4,5][3...6],
+        [1,2,3,4,5][5...8],
+        [1,2,3,4,5][10...15],
+        [1,2,3,4,5][-3...-1],
+        [1,2,3,4,5][-1...-3],
+        [1,2,3,4,5][3...1],
+      ]
+    result:
+      - [1, 2]
+      - [2, 3, 4]
+      - [4, 5]
+      - []
+      - []
+      - [3, 4]
+      - []
+      - []
+  - title: 'literals multiple'
+    query: |
+      [
+        [1,2,3,4,5][2...6][0..1],
+      ]
+    result:
+      - [3, 4]

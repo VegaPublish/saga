@@ -1,0 +1,80 @@
+title: "! operator"
+documents:
+- _id: "id"
+  _type: "test"
+  v_true: true
+  v_false: false
+  v_null: null
+  v_string: "string"
+  v_integer: 1
+
+tests:
+- title: "! attributes booleans"
+  query: |
+    [
+      !*[_id=='id'][0].v_true,
+      !*[_id=='id'][0].v_false,
+    ]
+  result: [
+    false,
+    true,
+  ]
+- title: "! attributes nulls"
+  query: |
+    [
+      !*[_id=='id'][0].v_null,
+    ]
+  result: [
+    null,
+  ]
+- title: "! attributes incompatible"
+  # FIXME Not exhaustive, should be generated programmatically in a
+  # future test framework (see #525)
+  query: |
+    [
+      !*[_id=='id'][0].v_string,
+      !*[_id=='id'][0].v_integer,
+    ]
+  result: [
+    # FIXME Should error out, see https://github.com/sanity-io/gradient/issues/561
+    null,
+    null,
+  ]
+
+- title: "! literals booleans"
+  query: |
+    [
+      !true,
+      !false,
+    ]
+  result: [
+    false,
+    true,
+  ]
+- title: "! literals nulls"
+  query: |
+    [
+      !null,
+    ]
+  result: [
+    null,
+  ]
+- title: "! literals incompatible"
+  query: |
+    [
+      !1,
+      !3.14,
+      !"string",
+      ![],
+      !{},
+    ]
+  result: [
+    # FIXME Should error out, or at least yield a boolean.
+    # See https://github.com/sanity-io/gradient/issues/561
+    # and https://github.com/sanity-io/gradient/issues/563
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]

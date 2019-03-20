@@ -1,0 +1,4 @@
+node_modules
+secrets
+coverage
+.nyc_output

@@ -1,0 +1,35 @@
+# Tests for null.
+title: "Datatype: null"
+documents:
+- _id: "null"
+  _type: "test"
+  value: null
+
+tests:
+- title: "Null attributes"
+  query: |
+    *[ _id == "null" ][0]{value}
+  # FIXME It should be possible to store explicit null values, so
+  # the correct result should be:
+  result: {}
+  # result: {}
+- title: "Null attributes missing"
+  query: |
+    *[ _id == "null" ][0].other
+  result: null
+- title: "Null literals"
+  query: |
+    null
+  result: null
+- title: "Null literals nil"
+  # FIXME this yields null, but that is probably not the desired result. See:
+  # https://github.com/sanity-io/gradient/issues/557
+  query: |
+    nil
+  result: null
+- title: "Null literals non-lowercase"
+  # FIXME this yields null, but that is probably not the desired result. See:
+  # https://github.com/sanity-io/gradient/issues/557
+  query: |
+    [Null, NULL]
+  result: [null, null]

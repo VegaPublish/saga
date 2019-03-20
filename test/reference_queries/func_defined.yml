@@ -1,0 +1,118 @@
+title: "defined() function"
+documents:
+- _id: "id"
+  _type: "test"
+  v_array: [1, 3.14, "string", true, [1, 2, 3], {"key": "value"}]
+  v_array_empty: []
+  v_array_null: [1, 3.14, "string", true, [1, 2, 3], {"key": "value"}, null]
+  v_decimal: 3.14
+  v_false: false
+  v_integer: 1
+  v_null: null
+  v_object: {
+    "v_array": ["a", "b", "c"],
+    "v_boolean": true,
+    "v_decimal": 2.718,
+    "v_integer": 2,
+    "v_null": null,
+    "v_object": {"k": "v"},
+    "v_string": "abc"
+  }
+  v_object_empty: {}
+  v_string: "string"
+  v_true: true
+
+tests:
+- title: "attributes"
+  query: |
+    [
+      defined(*[_id=="id"][0].v_array),
+      defined(*[_id=="id"][0].v_array_empty),
+      defined(*[_id=="id"][0].v_array_null),
+      defined(*[_id=="id"][0].v_decimal),
+      defined(*[_id=="id"][0].v_false),
+      defined(*[_id=="id"][0].v_integer),
+      defined(*[_id=="id"][0].v_null),
+      defined(*[_id=="id"][0].v_object),
+      defined(*[_id=="id"][0].v_object_empty),
+      defined(*[_id=="id"][0].v_string),
+      defined(*[_id=="id"][0].v_true),
+      defined(*[_id=="id"][0].v_missing),
+    ]
+  result:
+  - true
+  # FIXME Should return true: https://github.com/sanity-io/gradient/issues/517
+  - false
+  - true
+  - true
+  - true
+  - true
+  - false
+  - true
+  # FIXME Should return true: https://github.com/sanity-io/gradient/issues/517
+  - false
+  - true
+  - true
+  - false
+
+- title: "attributes filter"
+  query: |
+    [
+      *[defined(v_array)]._id,
+      *[defined(v_array_empty)]._id,
+      *[defined(v_array_null)]._id,
+      *[defined(v_decimal)]._id,
+      *[defined(v_false)]._id,
+      *[defined(v_integer)]._id,
+      *[defined(v_null)]._id,
+      *[defined(v_object)]._id,
+      *[defined(v_object_empty)]._id,
+      *[defined(v_string)]._id,
+      *[defined(v_true)]._id,
+      *[defined(v_missing)]._id,
+    ]
+  result:
+  - [id]
+  - [] # FIXME Should be id:
+  - [id]
+  - [id]
+  - [id]
+  - [id]
+  - []
+  - [id]
+  - [] # FIXME Should be id
+  - [id]
+  - [id]
+  - []
+
+- title: "literals"
+  query: |
+    [
+      defined([1, 2, 3]),
+      defined([]),
+      defined([1, 2, null]),
+      defined(3.14),
+      defined(false),
+      defined(1),
+      defined(null),
+      defined({"a": 1}),
+      defined({}),
+      defined("abc"),
+      defined(true),
+      defined(missing),
+    ]
+  result:
+  - true
+  # FIXME Should return true: https://github.com/sanity-io/gradient/issues/517
+  - false
+  - true
+  - true
+  - true
+  - true
+  - false
+  - true
+  # FIXME Should return true: https://github.com/sanity-io/gradient/issues/517
+  - false
+  - true
+  - true
+  - false

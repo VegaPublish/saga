@@ -1,0 +1,87 @@
+title: "path() function"
+documents:
+- _id: "id"
+  _type: "values"
+  v_array: [1, 3.14, "string", true, [1, 2, 3], {"key": "value"}]
+  v_array_empty: []
+  v_array_null: [null, 1, 3.14, "string", true, [1, 2, 3], {"key": "value"}]
+  v_decimal: 3.14
+  v_false: false
+  v_integer: 1
+  v_null: null
+  v_object: {
+    "v_array": ["a", "b", "c"],
+    "v_boolean": true,
+    "v_decimal": 2.718,
+    "v_integer": 2,
+    "v_null": null,
+    "v_object": {"k": "v"},
+    "v_string": "abc"
+  }
+  v_object_empty: {}
+  v_path: "a.b.c"
+  v_string: "string"
+  v_true: true
+
+tests:
+- title: "attributes"
+  # FIXME Needs to test errors with invalid types.
+  # FIXME Needs to handle null, see: https://github.com/sanity-io/gradient/issues/595
+  query: |
+    [
+      path(*[_id=="id"][0].v_path) in path("a.**"),
+      path(*[_id=="id"][0].v_path) in path("b.**"),
+      path(*[_id=="id"][0].v_string) == path("string"),
+      path(*[_id=="id"][0].v_string) == path("abc"),
+    ]
+  result:
+  - true
+  - false
+  - true
+  - false
+
+# FIXME path() should accept paths, see: https://github.com/sanity-io/gradient/issues/596
+#- title: "attributes multicast"
+#  only: true
+#  query: |
+#    [
+#      path(path(*[_id=="id"][0].v_path)) == path("a.b.c"),
+#      path(path(*[_id=="id"][0].v_path)) == path("foo"),
+#      path(path(*[_id=="id"][0].v_string)) == path("string"),
+#      path(path(*[_id=="id"][0].v_string)) == path("foo"),
+#    ]
+#  result:
+#  - true
+#  - false
+#  - true
+#  - false
+
+- title: "literals"
+  query: |
+    [
+      path("a.b.c") in path("a.**"),
+      path("a.b.c") in path("b.**"),
+      path("string") == path("string"),
+      path("string") == path("abc"),
+    ]
+  result:
+  - true
+  - false
+  - true
+  - false
+
+# FIXME path() should accept paths, see: https://github.com/sanity-io/gradient/issues/596
+#- title: "literals multicase"
+#  only: true
+#  query: |
+#    [
+#      path(path("a.b.c")) == path("a.b.c"),
+#      path(path("a.b.c")) == path("foo"),
+#      path(path("string")) == path("string"),
+#      path(path("string")) == path("foo"),
+#    ]
+#  result:
+#  - true
+#  - false
+#  - true
+#  - false

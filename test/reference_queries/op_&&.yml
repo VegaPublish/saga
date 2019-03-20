@@ -1,0 +1,108 @@
+title: "&& operator"
+documents:
+- _id: "id"
+  _type: "test"
+  v_true: true
+  v_false: false
+  v_null: null
+  v_string: "string"
+  v_integer: 1
+
+tests:
+- title: "&& attributes booleans"
+  query: |
+    [
+      *[_id=='id'][0].v_true && *[_id=='id'][0].v_true,
+      *[_id=='id'][0].v_true && *[_id=='id'][0].v_false,
+      *[_id=='id'][0].v_false && *[_id=='id'][0].v_true,
+      *[_id=='id'][0].v_false && *[_id=='id'][0].v_false,
+    ]
+  result: [
+    true,
+    false,
+    false,
+    false,
+  ]
+- title: "&& attributes nulls"
+  query: |
+    [
+      *[_id=='id'][0].v_true && *[_id=='id'][0].v_null,
+      *[_id=='id'][0].v_null && *[_id=='id'][0].v_true,
+      *[_id=='id'][0].v_false && *[_id=='id'][0].v_null,
+      *[_id=='id'][0].v_null && *[_id=='id'][0].v_false,
+      *[_id=='id'][0].v_null && *[_id=='id'][0].v_null,
+    ]
+  result: [
+    null,
+    null,
+    # FIXME The following two should be false, see:
+    # https://github.com/sanity-io/gradient/issues/560
+    false,
+    false,
+    null,
+  ]
+- title: "&& attributes incompatible"
+  # FIXME Not exhaustive, should be generated programmatically in a
+  # future test framework (see #525)
+  query: |
+    [
+      *[_id=='id'][0].v_true && *[_id=='id'][0].v_integer,
+      *[_id=='id'][0].v_integer && *[_id=='id'][0].v_false,
+      *[_id=='id'][0].v_string && *[_id=='id'][0].v_integer,
+    ]
+  result: [
+    # FIXME Should error out, see https://github.com/sanity-io/gradient/issues/561
+    null,
+    false,
+    null,
+  ]
+
+- title: "&& literals booleans"
+  query: |
+    [
+      true && true,
+      true && false,
+      false && true,
+      false && false,
+    ]
+  result: [
+    true,
+    false,
+    false,
+    false,
+  ]
+- title: "&& literals nulls"
+  query: |
+    [
+      true && null,
+      null && true,
+      false && null,
+      null && false,
+      null && null,
+    ]
+  result: [
+    null,
+    null,
+    # FIXME The following two should be false, see:
+    # https://github.com/sanity-io/gradient/issues/560
+    false,
+    false,
+    null,
+  ]
+- title: "&& literals incompatible"
+  # FIXME Not exhaustive, should be generated programmatically in a
+  # future test framework (see #525).
+  query: |
+    [
+      true && 1,
+      1 && false,
+      "string" && 1,
+    ]
+  result: [
+    # FIXME Should error out, or at least yield a boolean.
+    # See https://github.com/sanity-io/gradient/issues/561
+    # and https://github.com/sanity-io/gradient/issues/563
+    null,
+    false,
+    null,
+  ]

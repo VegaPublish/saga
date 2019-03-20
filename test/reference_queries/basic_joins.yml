@@ -1,0 +1,57 @@
+title: 'Very basic tests to validate PoC (joins)'
+documents:
+  - _id: 'number1'
+    _type: 'test'
+    a: 1
+  - _id: 'number2'
+    _type: 'test'
+    a: 2
+  - _id: 'src1'
+    _type: 'source'
+    refs:
+      - _ref: 'number2'
+      - _ref: 'non-existant'
+        _weak: true
+  - _id: 'src2'
+    _type: 'source'
+    refs:
+      - _ref: 'number1'
+      - _ref: 'non-existant'
+        _weak: true
+      - _ref: 'number1'
+  - _id: 'embed'
+    _type: 'embedded'
+    objects:
+      - embedded:
+          _ref: 'number1'
+      - embedded:
+          _ref: 'number2'
+
+tests:
+  - title: 'Array map join'
+    query: |
+      *[_type == 'source']|order(_id)|{
+        refs[]->a,
+      }
+    result:
+      - refs:
+          - 2
+          - null
+      - refs:
+          - 1
+          - null
+          - 1
+
+  - title: 'Shallowly embedded simple join'
+    query: |
+      *[_type == 'embedded']{
+        objects[]{
+          embedded->{a}
+        }
+      }
+    result:
+      - objects:
+          - embedded:
+              a: 1
+          - embedded:
+              a: 2

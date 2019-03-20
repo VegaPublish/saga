@@ -1,0 +1,45 @@
+title: "global filters"
+documents:
+- _id: "secret1"
+  _type: "sensitive"
+  isPublic: false
+- _id: "public1"
+  _type: "sensitive"
+  isPublic: true
+- _id: "indirect"
+  _type: "document"
+  isPublic: true
+  public:
+    _ref: "public1"
+  secret:
+    _ref: "secret1"
+
+tests:
+- title: "restricted access"
+  globalFilter: |
+    isPublic == true
+  query: |
+    *[_type == "sensitive"]._id
+  result:
+  - public1
+
+- title: "public access"
+  globalFilter: |
+    true
+  query: |
+    *[_type == "sensitive"]|order(_id)._id
+  result:
+  - public1
+  - secret1
+
+- title: "indirect access"
+  globalFilter: |
+    isPublic == true
+  query: |
+    *[_id == "indirect"]{
+      public->_id,
+      secret->_id
+    }
+  result:
+  - public: public1
+    secret: secret1

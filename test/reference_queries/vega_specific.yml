@@ -1,0 +1,78 @@
+title: 'Regression tests for specific Vega-related bugs'
+documents:
+  - _id: r1
+    _type: reviewProcess
+    article:
+      _ref: a1
+  - _id: a1
+    _type: article
+  - _id: a2
+    _type: article
+  - _id: ri1
+    _type: reviewItem
+    review:
+      _ref: r1
+  - _id: i1
+    _type: issue
+    content:
+      - _type: 'section'
+        articles:
+          - _ref: a1
+  - _id: i2
+    _type: issue
+    content:
+      - _type: 'section'
+        articles:
+          - _ref: a1
+  - _id: i3
+    _type: issue
+    content:
+      - _type: 'section'
+        articles:
+          - _ref: a2
+
+tests:
+  - title: Review overview query
+    query: |
+      *[_type == "reviewProcess" && !(_id in path('drafts.**'))]|order(_createdAt desc)[0..1000]{
+        ...,
+        article->{_id,title},
+        "reviewItems": *[_type=="reviewItem" && !(_id in path('drafts.**')) && references(^._id)]{_id}
+      }
+    result:
+      - _id: 'r1'
+        _type: reviewProcess
+        article:
+          _id: a1
+        reviewItems:
+          - _id: ri1
+
+  - title: Article issues query
+    query: |
+      *[_type == "article" && _id == 'a1']{
+        _id, _type,
+        "issues": *[_type == "issue" && references(^._id)]{_id }
+      }
+    result:
+      - _id: a1
+        _type: article
+        issues:
+          - _id: i1
+          - _id: i2
+
+  - title: Article issues query (multiple issues)
+    query: |
+      *[_type == "article" && _id in ['a1', 'a2']]|order(_id){
+        _id, _type,
+        "issues": *[_type == "issue" && references(^._id)]{_id }
+      }
+    result:
+      - _id: a1
+        _type: article
+        issues:
+          - _id: i1
+          - _id: i2
+      - _id: a2
+        _type: article
+        issues:
+          - _id: i3

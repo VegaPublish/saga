@@ -1,0 +1,141 @@
+# Tests for strings.
+#
+# FIXME: we need a test for very long strings, e.g. megabytes/gigabytes.
+# Should be generated, not an explicit string.
+title: "Datatype: string"
+documents:
+- _id: "strings-empty"
+  _type: "test"
+  value: [""]
+- _id: "strings-escaped"
+  _type: "test"
+  value: [
+    "\\",
+    "\"",
+    "\f",
+    "\n",
+    "\r",
+    "\t",
+  ]
+- _id: "strings-utf8"
+  _type: "test"
+  value: [
+    "Plane 0, Basic Latin",
+    "Plane 0, Latin-1 Supplement: æøå",
+    "Plane 0, Latin-1 Supplement escaped: \u00E6\u00f8\u00E5",
+    "Plane 0, Kangxi Radicals: ⼈⽂⿋",
+    "Plane 0, Kangxi Radicals escaped: \u2F08\u2f42\u2FCB",
+    "Plane 1, Arabic (RTL): ڨضؠ",
+    "Plane 1, Arabic (RTL) escaped: \u06a8\u0636\u0620",
+    "Plane 1, Emoji: 👋😀🌟",
+    "Plane 1, Emoji escaped: \uD83D\udc4B\uD83D\ude00\uD83C\udf1f",
+    "Plane 2, CJK Compatibility: 屠寃櫛",
+    "Plane 2, CJK Compatibility escaped: \uD87E\udc77\uD87E\udc6d\uD87E\udced",
+  ]
+
+tests:
+- title: "String attributes empty"
+  query: |
+    *[ _id == "strings-empty" ][0].value
+  result:
+    [""]
+- title: "String attributes escaped"
+  query: |
+    *[ _id == "strings-escaped" ][0].value
+  result:
+    [
+      '\',
+      '"',
+      "\f",
+      "\n",
+      "\r",
+      "\t",
+    ]
+- title: "String attributes UTF-8"
+  query: |
+    *[ _id == "strings-utf8" ][0].value
+  result: [
+    "Plane 0, Basic Latin",
+    "Plane 0, Latin-1 Supplement: æøå",
+    "Plane 0, Latin-1 Supplement escaped: æøå",
+    "Plane 0, Kangxi Radicals: ⼈⽂⿋",
+    "Plane 0, Kangxi Radicals escaped: ⼈⽂⿋",
+    "Plane 1, Arabic (RTL): ڨضؠ",
+    "Plane 1, Arabic (RTL) escaped: ڨضؠ",
+    "Plane 1, Emoji: 👋😀🌟",
+    "Plane 1, Emoji escaped: 👋😀🌟",
+    "Plane 2, CJK Compatibility: 屠寃櫛",
+    "Plane 2, CJK Compatibility escaped: 屠寃櫛",
+  ]
+
+- title: "String literals empty"
+  query: "['', \"\"]"
+  result: ["", ""]
+- title: "String literals escaped"
+  query: |
+    [
+      "\\",
+      "\"",
+      "\f",
+      "\n",
+      "\r",
+      "\t"
+    ]
+  result: [
+    '\',
+    '"',
+    "\f",
+    "\n",
+    "\r",
+    "\t"
+  ]
+- title: "String literals UTF-8"
+  query: |
+    [
+      "Plane 0, Basic Latin",
+      "Plane 0, Latin-1 Supplement: æøå",
+      "Plane 0, Latin-1 Supplement escaped: \u00E6\u00f8\u00E5",
+      "Plane 0, Kangxi Radicals: ⼈⽂⿋",
+      "Plane 0, Kangxi Radicals escaped: \u2F08\u2f42\u2FCB",
+      "Plane 1, Arabic (RTL): ڨضؠ",
+      "Plane 1, Arabic (RTL) escaped: \u06a8\u0636\u0620",
+      "Plane 1, Emoji: 👋😀🌟",
+      "Plane 1, Emoji escaped: \uD83D\udc4B\uD83D\ude00\uD83C\udf1f",
+      "Plane 2, CJK Compatibility: 屠寃櫛",
+      "Plane 2, CJK Compatibility escaped: \uD87E\udc77\uD87E\udc6d\uD87E\udced",
+      'Plane 0, Basic Latin',
+      'Plane 0, Latin-1 Supplement: æøå',
+      'Plane 0, Latin-1 Supplement escaped: \u00E6\u00f8\u00E5',
+      'Plane 0, Kangxi Radicals: ⼈⽂⿋',
+      'Plane 0, Kangxi Radicals escaped: \u2F08\u2f42\u2FCB',
+      'Plane 1, Arabic (RTL): ڨضؠ',
+      'Plane 1, Arabic (RTL) escaped: \u06a8\u0636\u0620',
+      'Plane 1, Emoji: 👋😀🌟',
+      'Plane 1, Emoji escaped: \uD83D\udc4B\uD83D\ude00\uD83C\udf1f',
+      'Plane 2, CJK Compatibility: 屠寃櫛',
+      'Plane 2, CJK Compatibility escaped: \uD87E\udc77\uD87E\udc6d\uD87E\udced',
+    ] 
+  result: [
+    "Plane 0, Basic Latin",
+    "Plane 0, Latin-1 Supplement: æøå",
+    "Plane 0, Latin-1 Supplement escaped: æøå",
+    "Plane 0, Kangxi Radicals: ⼈⽂⿋",
+    "Plane 0, Kangxi Radicals escaped: ⼈⽂⿋",
+    "Plane 1, Arabic (RTL): ڨضؠ",
+    "Plane 1, Arabic (RTL) escaped: ڨضؠ",
+    "Plane 1, Emoji: 👋😀🌟",
+    "Plane 1, Emoji escaped: 👋😀🌟",
+    "Plane 2, CJK Compatibility: 屠寃櫛",
+    "Plane 2, CJK Compatibility escaped: 屠寃櫛",
+    "Plane 0, Basic Latin",
+    "Plane 0, Latin-1 Supplement: æøå",
+    "Plane 0, Latin-1 Supplement escaped: æøå",
+    "Plane 0, Kangxi Radicals: ⼈⽂⿋",
+    "Plane 0, Kangxi Radicals escaped: ⼈⽂⿋",
+    "Plane 1, Arabic (RTL): ڨضؠ",
+    "Plane 1, Arabic (RTL) escaped: ڨضؠ",
+    "Plane 1, Emoji: 👋😀🌟",
+    "Plane 1, Emoji escaped: 👋😀🌟",
+    "Plane 2, CJK Compatibility: 屠寃櫛",
+    "Plane 2, CJK Compatibility escaped: 屠寃櫛",
+  ]

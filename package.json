@@ -1,0 +1,99 @@
+{
+  "name": "saga",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Backend for Vega",
+  "main": "src/app.js",
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "npm run clean && npm run compile",
+    "compile": "babel --source-maps --copy-files -d lib/ src/",
+    "prepublishOnly": "npm run compile",
+    "postpublish": "npm run clean",
+    "coverage": "NODE_ENV=test jest --coverage --runInBand",
+    "start": "babel-node src/server.js | pino",
+    "start-with-options": "babel-node src/server.js",
+    "setup": "babel-node scripts/commands/setup.js",
+    "create-venue": "babel-node scripts/commands/createVenue.js",
+    "claim-root": "babel-node scripts/commands/claimRoot.js",
+    "watch": "remon -r babel-register src/server.js | pino",
+    "test": "NODE_ENV=test jest --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/VegaPublish/saga.git"
+  },
+  "keywords": [
+    "vega",
+    "saga"
+  ],
+  "engines": {
+    "node": ">=8.6.0"
+  },
+  "author": "Vega Publish <hello@vegapublish.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VegaPublish/saga/issues"
+  },
+  "homepage": "https://github.com/VegaPublish/saga#readme",
+  "dependencies": {
+    "@lyra/mutator": "^0.2.0",
+    "body-parser": "^1.18.3",
+    "boom": "^5.2.0",
+    "celebrate": "^7.0.6",
+    "commander": "^2.17.1",
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "end-of-stream": "^1.4.1",
+    "express": "^4.16.3",
+    "express-pino-logger": "^4.0.0",
+    "express-session": "^1.15.6",
+    "file-type": "^8.0.0",
+    "fs-extra": "^6.0.1",
+    "hard-rejection": "^1.0.0",
+    "joi": "^12.0.0",
+    "lodash": "^4.17.10",
+    "lru-cache": "^4.1.3",
+    "mead": "^1.3.5",
+    "mime-types": "^2.1.18",
+    "mongodb": "^3.1.0",
+    "node-fetch": "^2.2.0",
+    "opn": "^5.3.0",
+    "p-event": "^2.1.0",
+    "p-queue": "^2.4.2",
+    "passport": "^0.4.0",
+    "passport-google-oauth20": "^2.0.0",
+    "pino": "^4.17.3",
+    "pump": "^3.0.0",
+    "randomstring": "^1.1.5",
+    "sharp": "^0.20.4",
+    "sse-channel": "^3.1.1",
+    "uuid": "^3.3.0",
+    "ws": "^5.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "cookie-signature": "^1.0.6",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-sanity": "^0.132.2",
+    "jest": "^23.2.0",
+    "ora": "^3.0.0",
+    "passport-mocked": "^1.2.0",
+    "prettier": "^1.13.6",
+    "remon": "^1.0.2",
+    "rimraf": "^2.6.2",
+    "supertest": "^3.1.0"
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "node",
+    "globalSetup": "./test/helpers/globalSetup.js",
+    "setupFiles": [
+      "./test/helpers/setup.js"
+    ]
+  }
+}

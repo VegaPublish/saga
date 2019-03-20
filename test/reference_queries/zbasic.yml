@@ -1,0 +1,175 @@
+title: "Very basic tests to validate Saga"
+documents:
+- _id: "number1"
+  _type: "test"
+  title: "This is a Banana"
+  text: "The bananathing is a FROG!"
+  a: 1
+- _id: "number2"
+  _type: "test"
+  a: 2
+  ref: {
+    _ref: "number1"
+  }
+
+tests:
+- title: "Re-projection"
+  query: |
+    *[_type == 'test']|order(_id)[0...2]{..., "_id": "override", "literal": "hello"}{_id, literal}
+  result:
+    - _id: override
+      literal: hello
+    - _id: override
+      literal: hello
+- title: "Order by expression"
+  query: |
+    *[_type == 'test']|order(coalesce(a, 10))[].a
+  result:
+  - 1
+  - 2
+- title: "Automatic aliases for nested projections"
+  query: |
+    *[a == 2]{ref{_ref}}
+  result:
+  - ref:
+      _ref: "number1"
+- title: "References function"
+  query: |
+    *[references('number1')]._id
+  result:
+  - "number2"
+- title: "Match operator"
+  query: |
+    *[title match "banana" && text match ["banana*", "frog*"]]._id
+  result: ["number1"]
+- title: "Simple, explicit join"
+  query: |
+    *[a==2]{
+      "ref": *[_id == ^.ref._ref][0].a
+    }
+  result:
+  - ref: 1
+- title: "Simple, sugared join"
+  query: |
+    *[a==2]{
+      "ref": ref->a
+    }
+  result:
+  - ref: 1
+- title: "Simple sugared join with projection"
+  query: |
+    *[a==2]{
+      ref->{_id}
+    }
+  result:
+  - ref:
+      _id: "number1"
+- title: "One document by constraint"
+  query: |
+    *[a == 2]
+  result:
+  - _id: "number2"
+    _type: "test"
+    a: 2
+    ref:
+      _ref: "number1"
+- title: "One document by constraint with projection"
+  query: |
+    *[a == 1]{_id, "foo": "bar"}
+  result:
+  - _id: "number1"
+    foo: "bar"
+- title: "One document by constraint with projection and splat"
+  query: |
+    *[a == 2]{"foo": "bar", ...}
+  result:
+  - _id: "number2"
+    _type: "test"
+    a: 2
+    foo: "bar"
+    ref:
+      _ref: "number1"
+- title: "Array literal with subscripting"
+  query: |
+    [1,2,3,4][1...3]
+  result: [2,3]
+- title: "Array literal with and unwrapping"
+  query: |
+    [1,2,3,4][1]
+  result: 2
+- title: "Array of separate queries"
+  query: |
+    [*[_id == 'number2'][0]{a}, *[_id == 'number1']{a}[0]]
+  result:
+  - a: 2
+  - a: 1
+- title: "In operator"
+  query: |
+    [2 in [1, 2, 3, 4],
+     "foo" in ["bar", "baz"]]
+  result: [true, false]
+- title: "In path"
+  query: |
+    [
+      "foo.bar" in path('foo.*'),
+      "foo.bar" in path('foo.baz.*'),
+      "foo.bar" in path('**'),
+      "foo.bar" in path('*'),
+      "foo" in path('*'),
+      "foo.bar.baz" in path("foom")
+    ]
+  result: [true, false, true, false, true, false]
+- title: "Naked attribute projection"
+  query: |
+    *[_id == "number1"]._id
+  result:
+  - "number1"
+- title: "Basic ordering"
+  query: |
+    *[_type == 'test']|order(a desc).a
+  result:
+  - 2
+  - 1
+- title: "Literal array ordering"
+  query: |
+    [{"foo": 2}, {"foo": 1}]|order(foo)[].foo
+  result:
+  - 1
+  - 2
+- title: "Load of basic operators"
+  query: |
+    [
+      1 == 1,
+      1 == 2,
+      1 != 2,
+      1 != 1,
+      1 < 2,
+      2 < 1,
+      2 <= 2,
+      2 <= 1,
+      2 > 1,
+      1 > 2,
+      2 >= 2,
+      1 >= 2,
+      true || false,
+      false || false,
+      !false,
+      !true
+    ]
+  result:
+  - true
+  - false
+  - true
+  - false
+  - true
+  - false
+  - true
+  - false
+  - true
+  - false
+  - true
+  - false
+  - true
+  - false
+  - true
+  - false

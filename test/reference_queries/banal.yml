@@ -1,0 +1,13 @@
+title: 'Very basic tests to validate PoC (banal)'
+documents:
+  - _id: 'oneDoc'
+    _type: 'test'
+    title: 'This is a Banana'
+    a: 2
+
+tests:
+  - title: 'One document by constraint'
+    query: |
+      *[a == 2]{_id}
+    result:
+      - _id: 'oneDoc'
