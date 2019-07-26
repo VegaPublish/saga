@@ -39,7 +39,7 @@ module.exports = {
   data: {
     maxInputBytes: int(process.env.SAGA_DATA_MAX_INPUT_BYTES, TWO_MEGABYTES)
   },
-
+  // assets base URL, set localhost to saga's FQDN 
   assets: {
     baseUrl: removeTrailingSlash(process.env.SAGA_BASE_URL || 'http://localhost:4000'),
     maxInputBytes: int(process.env.SAGA_ASSETS_MAX_INPUT_BYTES, FIFTEEN_MEGABYTES),
@@ -48,7 +48,7 @@ module.exports = {
       basePath: process.env.SAGA_ASSETS_FS_BASE_PATH || path.join(__dirname, '..', '..', 'data', 'assets')
     }
   },
-
+// add each venue studio to the CORS_ORIGINS host list
   cors: {
     credentials: true,
     maxAge: int(process.env.SAGA_CORS_MAX_AGE, 600),
@@ -70,7 +70,7 @@ module.exports = {
       .concat(split(process.env.SAGA_CORS_EXPOSED_HEADERS))
       .filter(Boolean)
   },
-
+// mongodb server running elsewhere set localhost to ip/FQDN
   datastore: {
     adapter: 'MongoDB',
     url: process.env.SAGA_MONGODB_URL || 'mongodb://localhost:27017',
